@@ -3,9 +3,17 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./useAuth";
 import { toast } from "sonner";
 
+interface Favorite {
+  id: string;
+  product_id: string;
+  user_id?: string;
+  session_id?: string;
+  created_at: string;
+}
+
 export const useFavorites = () => {
   const { user } = useAuth();
-  const [favorites, setFavorites] = useState<string[]>([]);
+  const [favorites, setFavorites] = useState<Favorite[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Generate or get session ID for guests
@@ -22,7 +30,7 @@ export const useFavorites = () => {
     try {
       setLoading(true);
       
-      let query = supabase.from("favorites").select("product_id");
+      let query = supabase.from("favorites").select("*");
 
       if (user) {
         query = query.eq("user_id", user.id);
@@ -38,7 +46,7 @@ export const useFavorites = () => {
         return;
       }
 
-      setFavorites(data?.map((item) => item.product_id) || []);
+      setFavorites(data || []);
     } catch (error) {
       console.error("Error in fetchFavorites:", error);
     } finally {
@@ -48,28 +56,22 @@ export const useFavorites = () => {
 
   const toggleFavorite = async (productId: string) => {
     try {
-      const isFavorite = favorites.includes(productId);
+      // Check if already favorited
+      const existingFavorite = favorites.find(fav => fav.product_id === productId);
 
-      if (isFavorite) {
+      if (existingFavorite) {
         // Remove from favorites
-        let query = supabase.from("favorites").delete().eq("product_id", productId);
+        const { error } = await supabase
+          .from("favorites")
+          .delete()
+          .eq("id", existingFavorite.id);
 
-        if (user) {
-          query = query.eq("user_id", user.id);
-        } else {
-          const sessionId = getSessionId();
-          query = query.eq("session_id", sessionId).is("user_id", null);
-        }
+        if (error) throw error;
 
-        const { error } = await query;
-
-        if (error) {
-          toast.error("Erro ao remover dos favoritos");
-          console.error("Error removing favorite:", error);
-          return;
-        }
-
-        setFavorites((prev) => prev.filter((id) => id !== productId));
+        // Update local state
+        setFavorites(favorites.filter(fav => fav.id !== existingFavorite.id));
+        
+        toast.success("Removido dos favoritos");
       } else {
         // Add to favorites
         const favoriteData: any = {
@@ -82,20 +84,33 @@ export const useFavorites = () => {
           favoriteData.session_id = getSessionId();
         }
 
-        const { error } = await supabase.from("favorites").insert(favoriteData);
+        const { data, error } = await supabase
+          .from("favorites")
+          .insert(favoriteData)
+          .select()
+          .single();
 
-        if (error) {
-          toast.error("Erro ao adicionar aos favoritos");
-          console.error("Error adding favorite:", error);
-          return;
-        }
+        if (error) throw error;
 
-        setFavorites((prev) => [...prev, productId]);
+        // Update local state
+        setFavorites([...favorites, data]);
+        
+        toast.success("Adicionado aos favoritos");
       }
     } catch (error) {
-      console.error("Error in toggleFavorite:", error);
-      toast.error("Erro inesperado");
+      console.error("Error toggling favorite:", error);
+      toast.error("Erro ao atualizar favoritos");
     }
+  };
+
+  // Helper function to check if a product is favorited
+  const isFavorite = (productId: string) => {
+    return favorites.some(fav => fav.product_id === productId);
+  };
+
+  // Get favorite product IDs (for backward compatibility)
+  const getFavoriteIds = () => {
+    return favorites.map(fav => fav.product_id);
   };
 
   // Migrate guest favorites to user account when user logs in
@@ -135,8 +150,10 @@ export const useFavorites = () => {
 
   return {
     favorites,
+    favoriteIds: getFavoriteIds(), // For backward compatibility
     loading,
     toggleFavorite,
+    isFavorite,
     refetch: fetchFavorites,
   };
 };

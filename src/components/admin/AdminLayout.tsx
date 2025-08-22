@@ -16,6 +16,8 @@ import {
 import { ProductForm } from "./ProductForm";
 import { ProductList } from "./ProductList";
 
+import { BannerManagement } from "./BannerManagement";
+
 interface AdminLayoutProps {
   onBack: () => void;
 }
@@ -32,7 +34,7 @@ export const AdminLayout = ({ onBack }: AdminLayoutProps) => {
     { id: 'add-product', label: 'Novo Produto', icon: Plus },
     { id: 'orders', label: 'Pedidos', icon: ShoppingBag },
     { id: 'users', label: 'Usuários', icon: Users },
-    { id: 'settings', label: 'Configurações', icon: Settings },
+    { id: 'settings', label: 'Banners', icon: Settings },
   ] as const;
 
   return (
@@ -101,7 +103,7 @@ export const AdminLayout = ({ onBack }: AdminLayoutProps) => {
               {currentView === 'add-product' && <ProductForm />}
               {currentView === 'orders' && <OrdersPanel />}
               {currentView === 'users' && <UsersPanel />}
-              {currentView === 'settings' && <SettingsPanel />}
+              {currentView === 'settings' && <BannerManagement />}
             </div>
           </div>
         </div>

@@ -18,8 +18,10 @@ interface Product {
   category_id?: string;
   stock_quantity: number;
   is_active: boolean;
+  is_featured: boolean;
   created_at: string;
   updated_at: string;
+  product_images?: ProductImage[];
 }
 
 interface ProductImage {
@@ -70,7 +72,13 @@ export const useProducts = () => {
         console.error("Error fetching product images:", imagesError);
       }
 
-      setProducts(productsData || []);
+      // Combine products with their images
+      const productsWithImages = (productsData || []).map(product => ({
+        ...product,
+        product_images: imagesData?.filter(img => img.product_id === product.id) || []
+      }));
+
+      setProducts(productsWithImages);
       setProductImages(imagesData || []);
     } catch (error) {
       console.error("Error in fetchProducts:", error);

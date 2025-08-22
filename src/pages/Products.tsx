@@ -14,7 +14,7 @@ export const Products = () => {
   const [searchQuery, setSearchQuery] = useState("");
 
   const { products, loading: productsLoading, searchProducts } = useProducts();
-  const { favorites, toggleFavorite } = useFavorites();
+  const { favorites, favoriteIds, toggleFavorite } = useFavorites();
   const { addToCart, cartItemsCount } = useCart();
 
   const handleSearch = (query: string) => {
@@ -91,7 +91,7 @@ export const Products = () => {
         {/* Products Grid */}
         <ProductGrid
           products={products}
-          favorites={favorites}
+          favorites={favoriteIds}
           onToggleFavorite={toggleFavorite}
           onAddToCart={addToCart}
           isLoading={productsLoading}
