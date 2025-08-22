@@ -142,7 +142,11 @@ export const Header = ({ cartItemsCount, onCartClick, onAuthClick }: HeaderProps
                   <DropdownMenuItem className="font-medium">
                     {user.email}
                   </DropdownMenuItem>
-                  <DropdownMenuItem>Meus Pedidos</DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <a href="/orders" className="flex items-center w-full">
+                      Meus Pedidos
+                    </a>
+                  </DropdownMenuItem>
                   <DropdownMenuItem>Perfil</DropdownMenuItem>
                   <DropdownMenuItem>
                     <a href="/admin" className="flex items-center w-full">
