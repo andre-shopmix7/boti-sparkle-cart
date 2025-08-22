@@ -69,9 +69,9 @@ export const Header = ({ cartItemsCount, onCartClick, onAuthClick }: HeaderProps
   );
 
   return (
-    <header className="bg-white border-b-2 border-primary/20 shadow-sm sticky top-0 z-50">
+    <header className="bg-white/95 backdrop-blur-lg border-b border-border/20 shadow-elegant sticky top-0 z-50">
       {/* Top bar */}
-      <div className="bg-primary text-primary-foreground text-center py-2 text-sm">
+      <div className="bg-gradient-luxury text-white text-center py-2 text-sm font-medium">
         <p>✨ Frete grátis em compras acima de R$ 199,00 ✨</p>
       </div>
 
@@ -80,8 +80,10 @@ export const Header = ({ cartItemsCount, onCartClick, onAuthClick }: HeaderProps
         <div className="flex items-center justify-between gap-4">
           {/* Logo */}
           <div className="flex items-center gap-2 text-primary">
-            <Leaf className="h-8 w-8" />
-            <span className="text-xl font-bold">Boticário</span>
+            <Leaf className="h-8 w-8 text-accent" />
+            <span className="text-xl font-luxury font-bold bg-gradient-luxury bg-clip-text text-transparent">
+              Boticário
+            </span>
           </div>
 
           {/* Search bar - Desktop */}
@@ -131,17 +133,22 @@ export const Header = ({ cartItemsCount, onCartClick, onAuthClick }: HeaderProps
                   <Button 
                     variant="ghost" 
                     size="sm"
-                    className="text-primary hover:text-primary-foreground hover:bg-primary"
+                    className="text-primary hover:text-white hover:bg-gradient-luxury shadow-elegant"
                   >
                     <User className="h-5 w-5" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
+                <DropdownMenuContent align="end" className="glass-effect">
                   <DropdownMenuItem className="font-medium">
                     {user.email}
                   </DropdownMenuItem>
                   <DropdownMenuItem>Meus Pedidos</DropdownMenuItem>
                   <DropdownMenuItem>Perfil</DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <a href="/admin" className="flex items-center w-full">
+                      Painel Admin
+                    </a>
+                  </DropdownMenuItem>
                   <DropdownMenuItem onClick={handleSignOut}>
                     <LogOut className="h-4 w-4 mr-2" />
                     Sair
