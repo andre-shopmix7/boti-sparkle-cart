@@ -123,6 +123,7 @@ export type Database = {
           payment_method: string | null
           payment_status: string | null
           pix_qr_code: string | null
+          session_id: string | null
           shipping_address: string
           stripe_session_id: string | null
           total_amount: number
@@ -139,6 +140,7 @@ export type Database = {
           payment_method?: string | null
           payment_status?: string | null
           pix_qr_code?: string | null
+          session_id?: string | null
           shipping_address: string
           stripe_session_id?: string | null
           total_amount: number
@@ -155,6 +157,7 @@ export type Database = {
           payment_method?: string | null
           payment_status?: string | null
           pix_qr_code?: string | null
+          session_id?: string | null
           shipping_address?: string
           stripe_session_id?: string | null
           total_amount?: number
@@ -354,7 +357,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      set_session_context: {
+        Args: { session_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never
