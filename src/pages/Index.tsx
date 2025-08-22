@@ -1,7 +1,9 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { AuthPage } from "@/components/auth/AuthPage";
 import { Header } from "@/components/layout/Header";
 import { useAuth } from "@/hooks/useAuth";
+import { useCart } from "@/hooks/useCart";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -9,8 +11,8 @@ import { Sparkles, Heart, Gift, Truck } from "lucide-react";
 
 const Index = () => {
   const { user, loading } = useAuth();
+  const { cartItemsCount } = useCart();
   const [showAuth, setShowAuth] = useState(false);
-  const [cartItemsCount] = useState(0); // TODO: Implement cart functionality
 
   if (loading) {
     return (
@@ -23,16 +25,35 @@ const Index = () => {
     );
   }
 
+  const handleCartClick = () => {
+    // TODO: Implement cart modal/page
+    console.log("Cart clicked");
+  };
+
+  const handleAuthClick = () => {
+    if (user) {
+      // User is logged in, show profile menu or logout
+      console.log("User menu clicked");
+    } else {
+      setShowAuth(true);
+    }
+  };
+
   if (showAuth && !user) {
-    return <AuthPage />;
+    return (
+      <AuthPage
+        onAuthSuccess={() => setShowAuth(false)}
+        onBack={() => setShowAuth(false)}
+      />
+    );
   }
 
   return (
     <div className="min-h-screen bg-background">
       <Header 
         cartItemsCount={cartItemsCount}
-        onCartClick={() => {/* TODO: Implement cart */}}
-        onAuthClick={() => setShowAuth(true)}
+        onCartClick={handleCartClick}
+        onAuthClick={handleAuthClick}
       />
       
       <main>
@@ -47,10 +68,12 @@ const Index = () => {
               cosméticos de qualidade e cuidados especiais para você.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="text-lg px-8">
-                <Sparkles className="mr-2 h-5 w-5" />
-                Ver Produtos
-              </Button>
+              <Link to="/products">
+                <Button size="lg" className="text-lg px-8">
+                  <Sparkles className="mr-2 h-5 w-5" />
+                  Ver Produtos
+                </Button>
+              </Link>
               <Button variant="outline" size="lg" className="text-lg px-8 border-primary text-primary hover:bg-primary hover:text-primary-foreground">
                 <Gift className="mr-2 h-5 w-5" />
                 Promoções
@@ -128,12 +151,14 @@ const Index = () => {
                         </Badge>
                       )}
                     </div>
-                    <Button 
-                      variant="ghost" 
-                      className="w-full justify-start p-0 h-auto font-medium text-primary hover:text-primary-foreground group-hover:bg-primary/10"
-                    >
-                      Ver produtos →
-                    </Button>
+                    <Link to="/products">
+                      <Button 
+                        variant="ghost" 
+                        className="w-full justify-start p-0 h-auto font-medium text-primary hover:text-primary-foreground group-hover:bg-primary/10"
+                      >
+                        Ver produtos →
+                      </Button>
+                    </Link>
                   </CardContent>
                 </Card>
               ))}

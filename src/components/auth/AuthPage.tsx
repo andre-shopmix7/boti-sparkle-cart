@@ -8,7 +8,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { Leaf } from "lucide-react";
 
-export const AuthPage = () => {
+interface AuthPageProps {
+  onAuthSuccess?: () => void;
+  onBack?: () => void;
+}
+
+export const AuthPage = ({ onAuthSuccess, onBack }: AuthPageProps) => {
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
   const [formData, setFormData] = useState({
@@ -48,6 +53,7 @@ export const AuthPage = () => {
           title: "Login realizado com sucesso!",
           description: "Bem-vindo à loja Boticário",
         });
+        onAuthSuccess?.();
       }
     } catch (error) {
       toast({
@@ -97,6 +103,7 @@ export const AuthPage = () => {
           title: "Cadastro realizado!",
           description: "Verifique seu email para confirmar a conta",
         });
+        onAuthSuccess?.();
       }
     } catch (error) {
       toast({

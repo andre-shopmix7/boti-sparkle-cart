@@ -35,6 +35,38 @@ export type Database = {
         }
         Relationships: []
       }
+      favorites: {
+        Row: {
+          created_at: string
+          id: string
+          product_id: string | null
+          session_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          product_id?: string | null
+          session_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          product_id?: string | null
+          session_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "favorites_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       order_items: {
         Row: {
           created_at: string
@@ -168,36 +200,66 @@ export type Database = {
       }
       products: {
         Row: {
+          brand: string | null
           category_id: string | null
           created_at: string
           description: string | null
+          discount_percentage: number | null
           id: string
+          installment_price: number | null
+          installments: number | null
           is_active: boolean | null
+          is_featured: boolean | null
           name: string
+          original_price: number | null
           price: number
+          rating: number | null
+          review_count: number | null
+          special_offer: string | null
           stock_quantity: number
+          tags: string[] | null
           updated_at: string
         }
         Insert: {
+          brand?: string | null
           category_id?: string | null
           created_at?: string
           description?: string | null
+          discount_percentage?: number | null
           id?: string
+          installment_price?: number | null
+          installments?: number | null
           is_active?: boolean | null
+          is_featured?: boolean | null
           name: string
+          original_price?: number | null
           price: number
+          rating?: number | null
+          review_count?: number | null
+          special_offer?: string | null
           stock_quantity?: number
+          tags?: string[] | null
           updated_at?: string
         }
         Update: {
+          brand?: string | null
           category_id?: string | null
           created_at?: string
           description?: string | null
+          discount_percentage?: number | null
           id?: string
+          installment_price?: number | null
+          installments?: number | null
           is_active?: boolean | null
+          is_featured?: boolean | null
           name?: string
+          original_price?: number | null
           price?: number
+          rating?: number | null
+          review_count?: number | null
+          special_offer?: string | null
           stock_quantity?: number
+          tags?: string[] | null
           updated_at?: string
         }
         Relationships: [
