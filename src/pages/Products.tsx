@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Header } from "@/components/layout/Header";
 import { SearchBar } from "@/components/search/SearchBar";
+import { SearchFilters, SearchFilters as SearchFiltersType } from "@/components/search/SearchFilters";
 import { ProductGrid } from "@/components/products/ProductGrid";
 import { useProducts } from "@/hooks/useProducts";
 import { useFavorites } from "@/hooks/useFavorites";
@@ -12,13 +13,23 @@ export const Products = () => {
   const { user, loading: authLoading } = useAuth();
   const [showAuth, setShowAuth] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [showFilters, setShowFilters] = useState(false);
+  const [currentFilters, setCurrentFilters] = useState<SearchFiltersType>({
+    priceRange: [0, 1000],
+    sortBy: "created_at_desc",
+  });
 
   const { products, loading: productsLoading, searchProducts } = useProducts();
   const { favorites, favoriteIds, toggleFavorite } = useFavorites();
   const { addToCart, cartItemsCount } = useCart();
 
   const handleSearch = (query: string) => {
-    searchProducts(query);
+    searchProducts(query, currentFilters);
+  };
+
+  const handleFiltersChange = (filters: SearchFiltersType) => {
+    setCurrentFilters(filters);
+    searchProducts(searchQuery, filters);
   };
 
   const handleCartClick = () => {
@@ -63,7 +74,7 @@ export const Products = () => {
       <main className="container mx-auto px-4 py-8">
         {/* Search Section */}
         <div className="mb-8">
-          <div className="max-w-2xl mx-auto">
+          <div className="max-w-4xl mx-auto space-y-4">
             <SearchBar
               value={searchQuery}
               onChange={setSearchQuery}
@@ -71,6 +82,14 @@ export const Products = () => {
               placeholder="Buscar produtos, marcas ou categorias..."
               className="w-full"
             />
+            
+            <div className="flex justify-center">
+              <SearchFilters
+                onFiltersChange={handleFiltersChange}
+                isOpen={showFilters}
+                onToggle={() => setShowFilters(!showFilters)}
+              />
+            </div>
           </div>
         </div>
 

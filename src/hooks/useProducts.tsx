@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { SearchFilters } from "@/components/search/SearchFilters";
 
 interface Product {
   id: string;
@@ -38,20 +39,63 @@ export const useProducts = () => {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const fetchProducts = async (query = "") => {
+  const fetchProducts = async (query = "", filters?: SearchFilters) => {
     try {
       setLoading(true);
       
       let queryBuilder = supabase
         .from("products")
         .select("*")
-        .eq("is_active", true)
-        .order("created_at", { ascending: false });
+        .eq("is_active", true);
 
+      // Apply text search
       if (query.trim()) {
         queryBuilder = queryBuilder.or(
           `name.ilike.%${query}%,brand.ilike.%${query}%,description.ilike.%${query}%`
         );
+      }
+
+      // Apply filters
+      if (filters) {
+        if (filters.categoryId) {
+          queryBuilder = queryBuilder.eq("category_id", filters.categoryId);
+        }
+        
+        if (filters.brand) {
+          queryBuilder = queryBuilder.eq("brand", filters.brand);
+        }
+
+        if (filters.priceRange) {
+          queryBuilder = queryBuilder
+            .gte("price", filters.priceRange[0])
+            .lte("price", filters.priceRange[1]);
+        }
+
+        // Apply sorting
+        switch (filters.sortBy) {
+          case "price_asc":
+            queryBuilder = queryBuilder.order("price", { ascending: true });
+            break;
+          case "price_desc":
+            queryBuilder = queryBuilder.order("price", { ascending: false });
+            break;
+          case "name_asc":
+            queryBuilder = queryBuilder.order("name", { ascending: true });
+            break;
+          case "name_desc":
+            queryBuilder = queryBuilder.order("name", { ascending: false });
+            break;
+          case "rating_desc":
+            queryBuilder = queryBuilder.order("rating", { ascending: false });
+            break;
+          case "created_at_asc":
+            queryBuilder = queryBuilder.order("created_at", { ascending: true });
+            break;
+          default:
+            queryBuilder = queryBuilder.order("created_at", { ascending: false });
+        }
+      } else {
+        queryBuilder = queryBuilder.order("created_at", { ascending: false });
       }
 
       const { data: productsData, error: productsError } = await queryBuilder;
@@ -88,9 +132,9 @@ export const useProducts = () => {
     }
   };
 
-  const searchProducts = (query: string) => {
+  const searchProducts = (query: string, filters?: SearchFilters) => {
     setSearchQuery(query);
-    fetchProducts(query);
+    fetchProducts(query, filters);
   };
 
   // Get primary image for a product

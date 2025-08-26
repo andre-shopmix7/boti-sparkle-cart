@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Search, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { SearchSuggestions } from "./SearchSuggestions";
 
 interface SearchBarProps {
   value: string;
@@ -19,6 +20,7 @@ export const SearchBar = ({
   className = "",
 }: SearchBarProps) => {
   const [isFocused, setIsFocused] = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,6 +30,13 @@ export const SearchBar = ({
   const handleClear = () => {
     onChange("");
     onSearch("");
+    setShowSuggestions(false);
+  };
+
+  const handleSelectSuggestion = (suggestion: string) => {
+    onChange(suggestion);
+    onSearch(suggestion);
+    setShowSuggestions(false);
   };
 
   return (
@@ -40,8 +49,14 @@ export const SearchBar = ({
           type="text"
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
+          onFocus={() => {
+            setIsFocused(true);
+            setShowSuggestions(true);
+          }}
+          onBlur={() => {
+            setIsFocused(false);
+            setTimeout(() => setShowSuggestions(false), 200);
+          }}
           placeholder={placeholder}
           className="pl-10 pr-20 h-12 text-base bg-background border-border focus:border-primary focus:ring-primary/20"
         />
@@ -66,6 +81,12 @@ export const SearchBar = ({
           </Button>
         </div>
       </div>
+      
+      <SearchSuggestions
+        query={value}
+        onSelectSuggestion={handleSelectSuggestion}
+        isVisible={showSuggestions && isFocused}
+      />
     </form>
   );
 };
