@@ -248,19 +248,26 @@ export type Database = {
       }
       products: {
         Row: {
+          admin_notes: string | null
           brand: string | null
           category_id: string | null
+          cost_price: number | null
           created_at: string
           description: string | null
           discount_percentage: number | null
           id: string
           installment_price: number | null
           installments: number | null
+          inventory_value: number | null
+          invoice_number: string | null
           is_active: boolean | null
           is_featured: boolean | null
           name: string
           original_price: number | null
           price: number
+          profit_amount: number | null
+          profit_percentage: number | null
+          purchase_date: string | null
           rating: number | null
           review_count: number | null
           special_offer: string | null
@@ -269,19 +276,26 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          admin_notes?: string | null
           brand?: string | null
           category_id?: string | null
+          cost_price?: number | null
           created_at?: string
           description?: string | null
           discount_percentage?: number | null
           id?: string
           installment_price?: number | null
           installments?: number | null
+          inventory_value?: number | null
+          invoice_number?: string | null
           is_active?: boolean | null
           is_featured?: boolean | null
           name: string
           original_price?: number | null
           price: number
+          profit_amount?: number | null
+          profit_percentage?: number | null
+          purchase_date?: string | null
           rating?: number | null
           review_count?: number | null
           special_offer?: string | null
@@ -290,19 +304,26 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          admin_notes?: string | null
           brand?: string | null
           category_id?: string | null
+          cost_price?: number | null
           created_at?: string
           description?: string | null
           discount_percentage?: number | null
           id?: string
           installment_price?: number | null
           installments?: number | null
+          inventory_value?: number | null
+          invoice_number?: string | null
           is_active?: boolean | null
           is_featured?: boolean | null
           name?: string
           original_price?: number | null
           price?: number
+          profit_amount?: number | null
+          profit_percentage?: number | null
+          purchase_date?: string | null
           rating?: number | null
           review_count?: number | null
           special_offer?: string | null

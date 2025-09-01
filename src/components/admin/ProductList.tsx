@@ -20,7 +20,11 @@ import {
   Eye, 
   EyeOff, 
   Star,
-  Package
+  Package,
+  Calculator,
+  Receipt,
+  TrendingUp,
+  Warehouse
 } from "lucide-react";
 
 interface Product {
@@ -36,6 +40,13 @@ interface Product {
   is_active: boolean;
   is_featured: boolean;
   special_offer?: string;
+  cost_price?: number;
+  purchase_date?: string;
+  invoice_number?: string;
+  admin_notes?: string;
+  profit_percentage?: number;
+  profit_amount?: number;
+  inventory_value?: number;
   created_at: string;
 }
 
@@ -167,6 +178,51 @@ export const ProductList = ({ onEditProduct }: ProductListProps) => {
         </div>
       </div>
 
+      {/* Financial Summary */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card className="glass-effect shadow-elegant">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <Calculator className="h-4 w-4 text-accent" />
+              <span className="text-sm font-medium">Valor Total Estoque</span>
+            </div>
+            <p className="text-xl font-bold text-accent">
+              R$ {products
+                .filter(p => p.inventory_value)
+                .reduce((sum, p) => sum + (p.inventory_value || 0), 0)
+                .toFixed(2)}
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="glass-effect shadow-elegant">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <TrendingUp className="h-4 w-4 text-green-600" />
+              <span className="text-sm font-medium">Ganho Potencial</span>
+            </div>
+            <p className="text-xl font-bold text-green-600">
+              R$ {products
+                .filter(p => p.profit_amount && p.stock_quantity)
+                .reduce((sum, p) => sum + ((p.profit_amount || 0) * p.stock_quantity), 0)
+                .toFixed(2)}
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="glass-effect shadow-elegant">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <Warehouse className="h-4 w-4 text-blue-600" />
+              <span className="text-sm font-medium">Itens em Estoque</span>
+            </div>
+            <p className="text-xl font-bold text-blue-600">
+              {products.reduce((sum, p) => sum + p.stock_quantity, 0)} un.
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+
       <Card className="glass-effect shadow-elegant">
         <CardHeader>
           <div className="flex items-center justify-between">
@@ -190,7 +246,8 @@ export const ProductList = ({ onEditProduct }: ProductListProps) => {
               <TableHeader>
                 <TableRow>
                   <TableHead>Produto</TableHead>
-                  <TableHead>Preço</TableHead>
+                  <TableHead>Preço / Custo</TableHead>
+                  <TableHead>Ganho</TableHead>
                   <TableHead>Estoque</TableHead>
                   <TableHead>Avaliação</TableHead>
                   <TableHead>Status</TableHead>
@@ -224,12 +281,44 @@ export const ProductList = ({ onEditProduct }: ProductListProps) => {
                             -{product.discount_percentage}%
                           </Badge>
                         )}
+                        {product.cost_price && (
+                          <div className="text-xs text-muted-foreground mt-1">
+                            <span>Custo: R$ {product.cost_price.toFixed(2)}</span>
+                          </div>
+                        )}
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge variant={product.stock_quantity > 10 ? "default" : "destructive"}>
-                        {product.stock_quantity} un.
-                      </Badge>
+                      {product.cost_price && product.profit_percentage !== undefined ? (
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-1">
+                            <TrendingUp className="h-3 w-3 text-green-600" />
+                            <span className="text-sm font-medium text-green-600">
+                              {product.profit_percentage.toFixed(1)}%
+                            </span>
+                          </div>
+                          <div className="text-xs text-green-600">
+                            R$ {product.profit_amount?.toFixed(2) || '0.00'}
+                          </div>
+                        </div>
+                      ) : (
+                        <span className="text-xs text-muted-foreground">
+                          Não calculado
+                        </span>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <div className="space-y-1">
+                        <Badge variant={product.stock_quantity > 10 ? "default" : "destructive"}>
+                          {product.stock_quantity} un.
+                        </Badge>
+                        {product.cost_price && product.inventory_value && (
+                          <div className="text-xs text-muted-foreground">
+                            <Warehouse className="h-3 w-3 inline mr-1" />
+                            R$ {product.inventory_value.toFixed(2)}
+                          </div>
+                        )}
+                      </div>
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-1">
@@ -249,6 +338,12 @@ export const ProductList = ({ onEditProduct }: ProductListProps) => {
                           <Badge variant="outline" className="text-xs border-accent text-accent">
                             Destaque
                           </Badge>
+                        )}
+                        {product.invoice_number && (
+                          <div className="text-xs text-muted-foreground">
+                            <Receipt className="h-3 w-3 inline mr-1" />
+                            {product.invoice_number}
+                          </div>
                         )}
                       </div>
                     </TableCell>

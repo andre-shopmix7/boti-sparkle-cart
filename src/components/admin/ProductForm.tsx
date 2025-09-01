@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
-import { Save, Upload, Sparkles, Package } from "lucide-react";
+import { Save, Upload, Sparkles, Package, Calculator, Receipt, Calendar, FileText } from "lucide-react";
 
 interface ProductFormState {
   name: string;
@@ -21,6 +21,10 @@ interface ProductFormState {
   installment_price: string;
   special_offer: string;
   tags: string;
+  cost_price: string;
+  purchase_date: string;
+  invoice_number: string;
+  admin_notes: string;
   is_featured: boolean;
   is_active: boolean;
 }
@@ -46,6 +50,10 @@ export const ProductForm = ({ editingProduct, onBack }: ProductFormProps) => {
     installment_price: "",
     special_offer: "",
     tags: "",
+    cost_price: "",
+    purchase_date: "",
+    invoice_number: "",
+    admin_notes: "",
     is_featured: false,
     is_active: true,
   });
@@ -65,6 +73,10 @@ export const ProductForm = ({ editingProduct, onBack }: ProductFormProps) => {
         installment_price: editingProduct.installment_price?.toString() || "",
         special_offer: editingProduct.special_offer || "",
         tags: editingProduct.tags?.join(", ") || "",
+        cost_price: editingProduct.cost_price?.toString() || "",
+        purchase_date: editingProduct.purchase_date || "",
+        invoice_number: editingProduct.invoice_number || "",
+        admin_notes: editingProduct.admin_notes || "",
         is_featured: editingProduct.is_featured || false,
         is_active: editingProduct.is_active ?? true,
       });
@@ -105,10 +117,14 @@ export const ProductForm = ({ editingProduct, onBack }: ProductFormProps) => {
         installment_price: formData.installment_price ? parseFloat(formData.installment_price) : null,
         special_offer: formData.special_offer || null,
         tags: formData.tags ? formData.tags.split(',').map(tag => tag.trim()) : null,
+        cost_price: formData.cost_price ? parseFloat(formData.cost_price) : null,
+        purchase_date: formData.purchase_date || null,
+        invoice_number: formData.invoice_number || null,
+        admin_notes: formData.admin_notes || null,
         is_featured: formData.is_featured,
         is_active: formData.is_active,
-        rating: 5.0,
-        review_count: 0,
+        rating: editingProduct ? editingProduct.rating : 5.0,
+        review_count: editingProduct ? editingProduct.review_count : 0,
       };
 
       const { data: product, error } = editingProduct 
@@ -175,6 +191,10 @@ export const ProductForm = ({ editingProduct, onBack }: ProductFormProps) => {
           installment_price: "",
           special_offer: "",
           tags: "",
+          cost_price: "",
+          purchase_date: "",
+          invoice_number: "",
+          admin_notes: "",
           is_featured: false,
           is_active: true,
         });
@@ -327,6 +347,96 @@ export const ProductForm = ({ editingProduct, onBack }: ProductFormProps) => {
                 placeholder="Descreva o produto..."
                 className="min-h-[100px]"
               />
+            </div>
+
+            {/* Administrative Fields Section */}
+            <div className="border-t pt-6 mt-6">
+              <div className="flex items-center gap-2 mb-4">
+                <Calculator className="h-5 w-5 text-accent" />
+                <h3 className="text-lg font-luxury font-semibold">Informações Administrativas</h3>
+                <span className="text-xs bg-accent/10 text-accent px-2 py-1 rounded">Privado</span>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Valor Pago (Custo) R$</label>
+                  <Input
+                    type="number"
+                    step="0.01"
+                    value={formData.cost_price}
+                    onChange={(e) => handleInputChange('cost_price', e.target.value)}
+                    placeholder="45.50"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Data da Compra</label>
+                  <Input
+                    type="date"
+                    value={formData.purchase_date}
+                    onChange={(e) => handleInputChange('purchase_date', e.target.value)}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Nº da Nota Fiscal</label>
+                  <Input
+                    value={formData.invoice_number}
+                    onChange={(e) => handleInputChange('invoice_number', e.target.value)}
+                    placeholder="NF-123456"
+                  />
+                </div>
+
+                {/* Campos calculados - somente leitura */}
+                {formData.cost_price && formData.price && (
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-accent">Ganho (Calculado)</label>
+                    <div className="p-3 bg-accent/5 border border-accent/20 rounded-md">
+                      <div className="text-sm">
+                        <div className="flex justify-between">
+                          <span>Percentual:</span>
+                          <span className="font-medium text-green-600">
+                            {formData.cost_price && formData.price 
+                              ? (((parseFloat(formData.price) - parseFloat(formData.cost_price)) / parseFloat(formData.cost_price)) * 100).toFixed(1)
+                              : '0'}%
+                          </span>
+                        </div>
+                        <div className="flex justify-between mt-1">
+                          <span>Valor:</span>
+                          <span className="font-medium text-green-600">
+                            R$ {formData.cost_price && formData.price 
+                              ? (parseFloat(formData.price) - parseFloat(formData.cost_price)).toFixed(2)
+                              : '0.00'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {formData.cost_price && formData.stock_quantity && (
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-accent">Valor Total do Estoque</label>
+                    <div className="p-3 bg-accent/5 border border-accent/20 rounded-md">
+                      <span className="font-medium text-lg">
+                        R$ {formData.cost_price && formData.stock_quantity
+                          ? (parseFloat(formData.cost_price) * parseInt(formData.stock_quantity)).toFixed(2)
+                          : '0.00'}
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="space-y-2 mt-4">
+                <label className="text-sm font-medium">Observações Administrativas</label>
+                <Textarea
+                  value={formData.admin_notes}
+                  onChange={(e) => handleInputChange('admin_notes', e.target.value)}
+                  placeholder="Informações internas sobre o produto, fornecedor, etc..."
+                  rows={3}
+                />
+              </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
