@@ -25,6 +25,7 @@ interface ProductFormState {
   purchase_date: string;
   invoice_number: string;
   admin_notes: string;
+  expiry_date: string;
   is_featured: boolean;
   is_active: boolean;
 }
@@ -54,6 +55,7 @@ export const ProductForm = ({ editingProduct, onBack }: ProductFormProps) => {
     purchase_date: "",
     invoice_number: "",
     admin_notes: "",
+    expiry_date: "",
     is_featured: false,
     is_active: true,
   });
@@ -77,6 +79,7 @@ export const ProductForm = ({ editingProduct, onBack }: ProductFormProps) => {
         purchase_date: editingProduct.purchase_date || "",
         invoice_number: editingProduct.invoice_number || "",
         admin_notes: editingProduct.admin_notes || "",
+        expiry_date: editingProduct.expiry_date || "",
         is_featured: editingProduct.is_featured || false,
         is_active: editingProduct.is_active ?? true,
       });
@@ -121,6 +124,7 @@ export const ProductForm = ({ editingProduct, onBack }: ProductFormProps) => {
         purchase_date: formData.purchase_date || null,
         invoice_number: formData.invoice_number || null,
         admin_notes: formData.admin_notes || null,
+        expiry_date: formData.expiry_date || null,
         is_featured: formData.is_featured,
         is_active: formData.is_active,
         rating: editingProduct ? editingProduct.rating : 5.0,
@@ -195,6 +199,7 @@ export const ProductForm = ({ editingProduct, onBack }: ProductFormProps) => {
           purchase_date: "",
           invoice_number: "",
           admin_notes: "",
+          expiry_date: "",
           is_featured: false,
           is_active: true,
         });
@@ -375,6 +380,15 @@ export const ProductForm = ({ editingProduct, onBack }: ProductFormProps) => {
                     type="date"
                     value={formData.purchase_date}
                     onChange={(e) => handleInputChange('purchase_date', e.target.value)}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Data de Validade</label>
+                  <Input
+                    type="date"
+                    value={formData.expiry_date}
+                    onChange={(e) => handleInputChange('expiry_date', e.target.value)}
                   />
                 </div>
 

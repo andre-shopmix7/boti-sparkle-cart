@@ -24,7 +24,8 @@ import {
   Calculator,
   Receipt,
   TrendingUp,
-  Warehouse
+  Warehouse,
+  Calendar
 } from "lucide-react";
 
 interface Product {
@@ -47,6 +48,7 @@ interface Product {
   profit_percentage?: number;
   profit_amount?: number;
   inventory_value?: number;
+  expiry_date?: string;
   created_at: string;
 }
 
@@ -280,6 +282,12 @@ export const ProductList = ({ onEditProduct }: ProductListProps) => {
                           <Badge variant="destructive" className="text-xs">
                             -{product.discount_percentage}%
                           </Badge>
+                        )}
+                        {product.expiry_date && (
+                          <div className="text-xs text-muted-foreground">
+                            <Calendar className="h-3 w-3 inline mr-1" />
+                            Validade: {new Date(product.expiry_date).toLocaleDateString('pt-BR')}
+                          </div>
                         )}
                         {product.cost_price && (
                           <div className="text-xs text-muted-foreground mt-1">

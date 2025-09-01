@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { ProductForm } from "./ProductForm";
 import { ProductList } from "./ProductList";
+import { AdminDashboard } from "./AdminDashboard";
 
 import { BannerManagement } from "./BannerManagement";
 
@@ -129,39 +130,6 @@ export const AdminLayout = ({ onBack }: AdminLayoutProps) => {
   );
 };
 
-const AdminDashboard = () => (
-  <div className="space-y-6">
-    <div>
-      <h2 className="text-2xl font-luxury font-semibold mb-2">Dashboard</h2>
-      <p className="text-muted-foreground">Visão geral do seu e-commerce</p>
-    </div>
-    
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {[
-        { title: "Produtos", value: "24", subtitle: "Total de produtos", icon: Package },
-        { title: "Pedidos", value: "12", subtitle: "Hoje", icon: ShoppingBag },
-        { title: "Usuários", value: "156", subtitle: "Cadastrados", icon: Users },
-      ].map((stat, index) => {
-        const Icon = stat.icon;
-        return (
-          <Card key={index} className="glass-effect shadow-elegant hover:shadow-luxury transition-all duration-300">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">{stat.title}</p>
-                  <p className="text-3xl font-luxury font-bold text-accent">{stat.value}</p>
-                  <p className="text-xs text-muted-foreground">{stat.subtitle}</p>
-                </div>
-                <Icon className="h-8 w-8 text-accent/60" />
-              </div>
-            </CardContent>
-          </Card>
-        );
-      })}
-    </div>
-  </div>
-);
-
 const OrdersPanel = () => (
   <Card className="glass-effect shadow-elegant">
     <CardHeader>
@@ -177,17 +145,6 @@ const UsersPanel = () => (
   <Card className="glass-effect shadow-elegant">
     <CardHeader>
       <CardTitle className="font-luxury">Gerenciar Usuários</CardTitle>
-    </CardHeader>
-    <CardContent>
-      <p className="text-muted-foreground">Funcionalidade em desenvolvimento...</p>
-    </CardContent>
-  </Card>
-);
-
-const SettingsPanel = () => (
-  <Card className="glass-effect shadow-elegant">
-    <CardHeader>
-      <CardTitle className="font-luxury">Configurações</CardTitle>
     </CardHeader>
     <CardContent>
       <p className="text-muted-foreground">Funcionalidade em desenvolvimento...</p>

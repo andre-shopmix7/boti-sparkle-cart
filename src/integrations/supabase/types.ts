@@ -255,6 +255,7 @@ export type Database = {
           created_at: string
           description: string | null
           discount_percentage: number | null
+          expiry_date: string | null
           id: string
           installment_price: number | null
           installments: number | null
@@ -283,6 +284,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           discount_percentage?: number | null
+          expiry_date?: string | null
           id?: string
           installment_price?: number | null
           installments?: number | null
@@ -311,6 +313,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           discount_percentage?: number | null
+          expiry_date?: string | null
           id?: string
           installment_price?: number | null
           installments?: number | null
