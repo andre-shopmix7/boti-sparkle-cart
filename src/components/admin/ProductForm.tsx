@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
@@ -25,7 +25,12 @@ interface ProductFormState {
   is_active: boolean;
 }
 
-export const ProductForm = () => {
+interface ProductFormProps {
+  editingProduct?: any;
+  onBack?: () => void;
+}
+
+export const ProductForm = ({ editingProduct, onBack }: ProductFormProps) => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -44,6 +49,27 @@ export const ProductForm = () => {
     is_featured: false,
     is_active: true,
   });
+
+  // Populate form when editing
+  useEffect(() => {
+    if (editingProduct) {
+      setFormData({
+        name: editingProduct.name || "",
+        brand: editingProduct.brand || "",
+        description: editingProduct.description || "",
+        price: editingProduct.price?.toString() || "",
+        original_price: editingProduct.original_price?.toString() || "",
+        discount_percentage: editingProduct.discount_percentage?.toString() || "",
+        stock_quantity: editingProduct.stock_quantity?.toString() || "",
+        installments: editingProduct.installments?.toString() || "1",
+        installment_price: editingProduct.installment_price?.toString() || "",
+        special_offer: editingProduct.special_offer || "",
+        tags: editingProduct.tags?.join(", ") || "",
+        is_featured: editingProduct.is_featured || false,
+        is_active: editingProduct.is_active ?? true,
+      });
+    }
+  }, [editingProduct]);
 
   const handleInputChange = (field: keyof ProductFormState, value: string | boolean) => {
     setFormData(prev => ({
@@ -85,11 +111,18 @@ export const ProductForm = () => {
         review_count: 0,
       };
 
-      const { data: product, error } = await supabase
-        .from("products")
-        .insert(productData)
-        .select()
-        .single();
+      const { data: product, error } = editingProduct 
+        ? await supabase
+            .from("products")
+            .update(productData)
+            .eq("id", editingProduct.id)
+            .select()
+            .single()
+        : await supabase
+            .from("products")
+            .insert(productData)
+            .select()
+            .single();
 
       if (error) throw error;
 
@@ -123,26 +156,30 @@ export const ProductForm = () => {
 
       toast({
         title: "Sucesso!",
-        description: "Produto cadastrado com sucesso.",
+        description: editingProduct ? "Produto atualizado com sucesso." : "Produto cadastrado com sucesso.",
       });
 
-      // Reset form
-      setFormData({
-        name: "",
-        brand: "",
-        description: "",
-        price: "",
-        original_price: "",
-        discount_percentage: "",
-        stock_quantity: "",
-        installments: "1",
-        installment_price: "",
-        special_offer: "",
-        tags: "",
-        is_featured: false,
-        is_active: true,
-      });
-      setImageFile(null);
+      // Reset form or go back
+      if (editingProduct && onBack) {
+        onBack();
+      } else {
+        setFormData({
+          name: "",
+          brand: "",
+          description: "",
+          price: "",
+          original_price: "",
+          discount_percentage: "",
+          stock_quantity: "",
+          installments: "1",
+          installment_price: "",
+          special_offer: "",
+          tags: "",
+          is_featured: false,
+          is_active: true,
+        });
+        setImageFile(null);
+      }
     } catch (error) {
       console.error('Error creating product:', error);
       toast({
@@ -164,14 +201,26 @@ export const ProductForm = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-3">
-        <div className="p-2 bg-gradient-luxury rounded-lg">
-          <Package className="h-5 w-5 text-white" />
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-gradient-luxury rounded-lg">
+            <Package className="h-5 w-5 text-white" />
+          </div>
+          <div>
+            <h2 className="text-2xl font-luxury font-semibold">
+              {editingProduct ? "Editar Produto" : "Novo Produto"}
+            </h2>
+            <p className="text-muted-foreground">
+              {editingProduct ? "Atualize as informações do produto" : "Cadastre um novo produto na loja"}
+            </p>
+          </div>
         </div>
-        <div>
-          <h2 className="text-2xl font-luxury font-semibold">Novo Produto</h2>
-          <p className="text-muted-foreground">Cadastre um novo produto na loja</p>
-        </div>
+        
+        {onBack && (
+          <Button variant="outline" onClick={onBack}>
+            Voltar
+          </Button>
+        )}
       </div>
 
       <Card className="glass-effect shadow-elegant">
@@ -354,7 +403,7 @@ export const ProductForm = () => {
                 className="bg-gradient-luxury text-white shadow-glow hover:shadow-luxury transition-all duration-300"
               >
                 <Save className="h-4 w-4 mr-2" />
-                {isLoading ? "Salvando..." : "Salvar Produto"}
+                {isLoading ? "Salvando..." : (editingProduct ? "Atualizar Produto" : "Salvar Produto")}
               </Button>
             </div>
           </form>

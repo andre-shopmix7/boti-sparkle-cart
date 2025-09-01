@@ -22,11 +22,12 @@ interface AdminLayoutProps {
   onBack: () => void;
 }
 
-type AdminView = 'dashboard' | 'products' | 'add-product' | 'orders' | 'users' | 'settings';
+type AdminView = 'dashboard' | 'products' | 'add-product' | 'edit-product' | 'orders' | 'users' | 'settings';
 
 export const AdminLayout = ({ onBack }: AdminLayoutProps) => {
   const { user } = useAuth();
   const [currentView, setCurrentView] = useState<AdminView>('dashboard');
+  const [editingProduct, setEditingProduct] = useState<any>(null);
 
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: BarChart3 },
@@ -99,8 +100,24 @@ export const AdminLayout = ({ onBack }: AdminLayoutProps) => {
           <div className="lg:col-span-3">
             <div className="animate-luxury-fade">
               {currentView === 'dashboard' && <AdminDashboard />}
-              {currentView === 'products' && <ProductList />}
+              {currentView === 'products' && (
+                <ProductList 
+                  onEditProduct={(product) => {
+                    setEditingProduct(product);
+                    setCurrentView('edit-product');
+                  }}
+                />
+              )}
               {currentView === 'add-product' && <ProductForm />}
+              {currentView === 'edit-product' && (
+                <ProductForm 
+                  editingProduct={editingProduct}
+                  onBack={() => {
+                    setCurrentView('products');
+                    setEditingProduct(null);
+                  }}
+                />
+              )}
               {currentView === 'orders' && <OrdersPanel />}
               {currentView === 'users' && <UsersPanel />}
               {currentView === 'settings' && <BannerManagement />}

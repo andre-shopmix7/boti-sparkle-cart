@@ -39,7 +39,11 @@ interface Product {
   created_at: string;
 }
 
-export const ProductList = () => {
+interface ProductListProps {
+  onEditProduct?: (product: Product) => void;
+}
+
+export const ProductList = ({ onEditProduct }: ProductListProps) => {
   const { toast } = useToast();
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
@@ -265,6 +269,7 @@ export const ProductList = () => {
                         <Button
                           variant="ghost"
                           size="sm"
+                          onClick={() => onEditProduct?.(product)}
                           title="Editar"
                         >
                           <Edit className="h-4 w-4" />
