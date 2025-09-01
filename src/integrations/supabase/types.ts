@@ -426,6 +426,30 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_public_products: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          brand: string
+          category_id: string
+          created_at: string
+          description: string
+          discount_percentage: number
+          id: string
+          installment_price: number
+          installments: number
+          is_active: boolean
+          is_featured: boolean
+          name: string
+          original_price: number
+          price: number
+          rating: number
+          review_count: number
+          special_offer: string
+          stock_quantity: number
+          tags: string[]
+          updated_at: string
+        }[]
+      }
       set_session_context: {
         Args: { session_id: string }
         Returns: undefined
