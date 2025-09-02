@@ -16,7 +16,7 @@ import {
 import { ProductForm } from "./ProductForm";
 import { ProductList } from "./ProductList";
 import { AdminDashboard } from "./AdminDashboard";
-
+import { OrdersManagement } from "./OrdersManagement";
 import { BannerManagement } from "./BannerManagement";
 
 interface AdminLayoutProps {
@@ -119,7 +119,7 @@ export const AdminLayout = ({ onBack }: AdminLayoutProps) => {
                   }}
                 />
               )}
-              {currentView === 'orders' && <OrdersPanel />}
+              {currentView === 'orders' && <OrdersManagement />}
               {currentView === 'users' && <UsersPanel />}
               {currentView === 'settings' && <BannerManagement />}
             </div>
