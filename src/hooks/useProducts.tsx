@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { SearchFilters } from "@/components/search/SearchFilters";
@@ -138,10 +138,10 @@ export const useProducts = () => {
     }
   };
 
-  const searchProducts = (query: string, filters?: SearchFilters) => {
+  const searchProducts = useCallback((query: string, filters?: SearchFilters) => {
     setSearchQuery(query);
     fetchProducts(query, filters);
-  };
+  }, []);
 
   // Get primary image for a product
   const getProductImage = (productId: string) => {

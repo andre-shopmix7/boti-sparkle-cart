@@ -29,7 +29,7 @@ export const FeaturedProducts = ({ selectedCategory }: FeaturedProductsProps) =>
     } else {
       searchProducts("");
     }
-  }, [selectedCategory, searchProducts]);
+  }, [selectedCategory]);
 
   if (loading) {
     return (
