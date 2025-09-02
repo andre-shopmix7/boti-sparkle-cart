@@ -1,3 +1,4 @@
+import React from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -8,10 +9,27 @@ import { useCart } from "@/hooks/useCart";
 import { Heart, ShoppingCart, Star, ArrowRight } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
 
-export const FeaturedProducts = () => {
-  const { products, loading } = useProducts();
+interface FeaturedProductsProps {
+  selectedCategory?: string | null;
+}
+
+export const FeaturedProducts = ({ selectedCategory }: FeaturedProductsProps) => {
+  const { products, loading, searchProducts } = useProducts();
   const { favorites, toggleFavorite } = useFavorites();
   const { addToCart } = useCart();
+
+  // Filter products by category if selected
+  React.useEffect(() => {
+    if (selectedCategory) {
+      searchProducts("", { 
+        categoryId: selectedCategory,
+        priceRange: [0, 1000],
+        sortBy: "created_at_desc"
+      });
+    } else {
+      searchProducts("");
+    }
+  }, [selectedCategory, searchProducts]);
 
   if (loading) {
     return (
@@ -35,13 +53,19 @@ export const FeaturedProducts = () => {
   }
 
   // Get featured products (limited to 8)
-  const featuredProducts = products
-    .filter(product => product.is_featured)
-    .slice(0, 8);
-
-  if (featuredProducts.length === 0) {
-    // If no featured products, show first 8 products
-    featuredProducts.push(...products.slice(0, 8));
+  let featuredProducts = products.slice(0, 8);
+  
+  // If category is selected, show filtered products
+  if (selectedCategory) {
+    featuredProducts = products.slice(0, 8);
+  } else {
+    // If no category selected, prioritize featured products
+    const actualFeaturedProducts = products.filter(product => product.is_featured);
+    if (actualFeaturedProducts.length > 0) {
+      featuredProducts = actualFeaturedProducts.slice(0, 8);
+    } else {
+      featuredProducts = products.slice(0, 8);
+    }
   }
 
   const handleToggleFavorite = (productId: string) => {
@@ -57,10 +81,10 @@ export const FeaturedProducts = () => {
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-luxury font-bold text-foreground mb-4">
-            Produtos em Destaque
+            {selectedCategory ? 'Produtos da Categoria' : 'Produtos em Destaque'}
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Descubra nossa seleção especial dos melhores produtos de beleza
+            {selectedCategory ? 'Produtos selecionados da categoria escolhida' : 'Descubra nossa seleção especial dos melhores produtos de beleza'}
           </p>
         </div>
 

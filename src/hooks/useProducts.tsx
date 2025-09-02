@@ -43,67 +43,73 @@ export const useProducts = () => {
     try {
       setLoading(true);
       
-      let queryBuilder = supabase
-        .from("products")
-        .select("*")
-        .eq("is_active", true);
+      // Use the public function for fetching products
+      const { data: productsData, error: productsError } = await supabase
+        .rpc("get_public_products");
+
+      if (productsError) {
+        toast.error("Erro ao buscar produtos");
+        console.error("Error fetching products:", productsError);
+        return;
+      }
+
+      let filteredProducts = productsData || [];
 
       // Apply text search
       if (query.trim()) {
-        queryBuilder = queryBuilder.or(
-          `name.ilike.%${query}%,brand.ilike.%${query}%,description.ilike.%${query}%`
+        const searchTerm = query.toLowerCase();
+        filteredProducts = filteredProducts.filter(product => 
+          product.name.toLowerCase().includes(searchTerm) ||
+          product.brand.toLowerCase().includes(searchTerm) ||
+          product.description.toLowerCase().includes(searchTerm)
         );
       }
 
       // Apply filters
       if (filters) {
         if (filters.categoryId) {
-          queryBuilder = queryBuilder.eq("category_id", filters.categoryId);
+          filteredProducts = filteredProducts.filter(product => 
+            product.category_id === filters.categoryId
+          );
         }
         
         if (filters.brand) {
-          queryBuilder = queryBuilder.eq("brand", filters.brand);
+          filteredProducts = filteredProducts.filter(product => 
+            product.brand === filters.brand
+          );
         }
 
         if (filters.priceRange) {
-          queryBuilder = queryBuilder
-            .gte("price", filters.priceRange[0])
-            .lte("price", filters.priceRange[1]);
+          filteredProducts = filteredProducts.filter(product => 
+            product.price >= filters.priceRange[0] && product.price <= filters.priceRange[1]
+          );
         }
 
         // Apply sorting
         switch (filters.sortBy) {
           case "price_asc":
-            queryBuilder = queryBuilder.order("price", { ascending: true });
+            filteredProducts.sort((a, b) => a.price - b.price);
             break;
           case "price_desc":
-            queryBuilder = queryBuilder.order("price", { ascending: false });
+            filteredProducts.sort((a, b) => b.price - a.price);
             break;
           case "name_asc":
-            queryBuilder = queryBuilder.order("name", { ascending: true });
+            filteredProducts.sort((a, b) => a.name.localeCompare(b.name));
             break;
           case "name_desc":
-            queryBuilder = queryBuilder.order("name", { ascending: false });
+            filteredProducts.sort((a, b) => b.name.localeCompare(a.name));
             break;
           case "rating_desc":
-            queryBuilder = queryBuilder.order("rating", { ascending: false });
+            filteredProducts.sort((a, b) => b.rating - a.rating);
             break;
           case "created_at_asc":
-            queryBuilder = queryBuilder.order("created_at", { ascending: true });
+            filteredProducts.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
             break;
           default:
-            queryBuilder = queryBuilder.order("created_at", { ascending: false });
+            filteredProducts.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
         }
       } else {
-        queryBuilder = queryBuilder.order("created_at", { ascending: false });
-      }
-
-      const { data: productsData, error: productsError } = await queryBuilder;
-
-      if (productsError) {
-        toast.error("Erro ao buscar produtos");
-        console.error("Error fetching products:", productsError);
-        return;
+        filteredProducts.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
       }
 
       // Fetch product images
@@ -117,7 +123,7 @@ export const useProducts = () => {
       }
 
       // Combine products with their images
-      const productsWithImages = (productsData || []).map(product => ({
+      const productsWithImages = filteredProducts.map(product => ({
         ...product,
         product_images: imagesData?.filter(img => img.product_id === product.id) || []
       }));

@@ -14,6 +14,7 @@ const Index = () => {
   const { user, loading } = useAuth();
   const { cartItemsCount } = useCart();
   const [showAuth, setShowAuth] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   if (loading) {
     return (
@@ -40,6 +41,10 @@ const Index = () => {
     }
   };
 
+  const handleCategoryFilter = (categoryId: string | null) => {
+    setSelectedCategory(categoryId);
+  };
+
   if (showAuth && !user) {
     return (
       <AuthPage
@@ -55,6 +60,7 @@ const Index = () => {
         cartItemsCount={cartItemsCount}
         onCartClick={handleCartClick}
         onAuthClick={handleAuthClick}
+        onCategoryFilter={handleCategoryFilter}
       />
       
       <main>
@@ -62,7 +68,7 @@ const Index = () => {
         <PromoBanner />
 
         {/* Featured Products */}
-        <FeaturedProducts />
+        <FeaturedProducts selectedCategory={selectedCategory} />
 
         {/* Benefits Section */}
         <section className="py-16 bg-background">

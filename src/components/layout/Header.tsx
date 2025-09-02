@@ -11,11 +11,13 @@ interface HeaderProps {
   cartItemsCount: number;
   onCartClick: () => void;
   onAuthClick: () => void;
+  onCategoryFilter?: (categoryId: string | null) => void;
 }
 export const Header = ({
   cartItemsCount,
   onCartClick,
-  onAuthClick
+  onAuthClick,
+  onCategoryFilter
 }: HeaderProps) => {
   const {
     user,
@@ -40,20 +42,65 @@ export const Header = ({
       description: `Buscando por: ${searchQuery}`
     });
   };
+  // Category mapping
+  const categoryMap = {
+    "Perfumaria": "e38521cd-5440-4932-b870-a698d8ed5c6f",
+    "Maquiagem": "450c38b9-c37b-4fb4-aad9-072c6d7ed62a", 
+    "Cabelos": "641f961a-01c7-4e48-8dbe-1e61ad61e402",
+    "Corpo & Banho": "e4a59a36-6bb8-452c-a6f0-eb1596710667",
+    "Rosto": "f5d1f039-06d6-45a3-846c-4b14dbf9de44"
+  };
+
+  const handleCategoryClick = (category: string) => {
+    const categoryId = categoryMap[category as keyof typeof categoryMap];
+    onCategoryFilter?.(categoryId);
+  };
+
+  const handleClearFilter = () => {
+    onCategoryFilter?.(null);
+  };
+
   const NavLinks = () => <>
-      <Button variant="ghost" className="text-primary hover:text-primary-foreground hover:bg-primary">
+      <Button 
+        variant="outline" 
+        className="text-primary hover:text-primary-foreground hover:bg-primary"
+        onClick={handleClearFilter}
+      >
+        Todos
+      </Button>
+      <Button 
+        variant="ghost" 
+        className="text-primary hover:text-primary-foreground hover:bg-primary"
+        onClick={() => handleCategoryClick("Perfumaria")}
+      >
         Perfumaria
       </Button>
-      <Button variant="ghost" className="text-primary hover:text-primary-foreground hover:bg-primary">
+      <Button 
+        variant="ghost" 
+        className="text-primary hover:text-primary-foreground hover:bg-primary"
+        onClick={() => handleCategoryClick("Maquiagem")}
+      >
         Maquiagem
       </Button>
-      <Button variant="ghost" className="text-primary hover:text-primary-foreground hover:bg-primary">
+      <Button 
+        variant="ghost" 
+        className="text-primary hover:text-primary-foreground hover:bg-primary"
+        onClick={() => handleCategoryClick("Cabelos")}
+      >
         Cabelos
       </Button>
-      <Button variant="ghost" className="text-primary hover:text-primary-foreground hover:bg-primary">
+      <Button 
+        variant="ghost" 
+        className="text-primary hover:text-primary-foreground hover:bg-primary"
+        onClick={() => handleCategoryClick("Corpo & Banho")}
+      >
         Corpo & Banho
       </Button>
-      <Button variant="ghost" className="text-primary hover:text-primary-foreground hover:bg-primary">
+      <Button 
+        variant="ghost" 
+        className="text-primary hover:text-primary-foreground hover:bg-primary"
+        onClick={() => handleCategoryClick("Rosto")}
+      >
         Rosto
       </Button>
     </>;
