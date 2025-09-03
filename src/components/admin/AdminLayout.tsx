@@ -18,12 +18,13 @@ import { ProductList } from "./ProductList";
 import { AdminDashboard } from "./AdminDashboard";
 import { OrdersManagement } from "./OrdersManagement";
 import { BannerManagement } from "./BannerManagement";
+import { UserRoleManager } from "./UserRoleManager";
 
 interface AdminLayoutProps {
   onBack: () => void;
 }
 
-type AdminView = 'dashboard' | 'products' | 'add-product' | 'edit-product' | 'orders' | 'users' | 'settings';
+type AdminView = 'dashboard' | 'products' | 'add-product' | 'edit-product' | 'orders' | 'users' | 'settings' | 'user-roles';
 
 export const AdminLayout = ({ onBack }: AdminLayoutProps) => {
   const { user } = useAuth();
@@ -35,7 +36,7 @@ export const AdminLayout = ({ onBack }: AdminLayoutProps) => {
     { id: 'products', label: 'Produtos', icon: Package },
     { id: 'add-product', label: 'Novo Produto', icon: Plus },
     { id: 'orders', label: 'Pedidos', icon: ShoppingBag },
-    { id: 'users', label: 'Usuários', icon: Users },
+    { id: 'user-roles', label: 'Permissões', icon: Users },
     { id: 'settings', label: 'Banners', icon: Settings },
   ] as const;
 
@@ -120,7 +121,7 @@ export const AdminLayout = ({ onBack }: AdminLayoutProps) => {
                 />
               )}
               {currentView === 'orders' && <OrdersManagement />}
-              {currentView === 'users' && <UsersPanel />}
+              {currentView === 'user-roles' && <UserRoleManager />}
               {currentView === 'settings' && <BannerManagement />}
             </div>
           </div>
@@ -134,17 +135,6 @@ const OrdersPanel = () => (
   <Card className="glass-effect shadow-elegant">
     <CardHeader>
       <CardTitle className="font-luxury">Gerenciar Pedidos</CardTitle>
-    </CardHeader>
-    <CardContent>
-      <p className="text-muted-foreground">Funcionalidade em desenvolvimento...</p>
-    </CardContent>
-  </Card>
-);
-
-const UsersPanel = () => (
-  <Card className="glass-effect shadow-elegant">
-    <CardHeader>
-      <CardTitle className="font-luxury">Gerenciar Usuários</CardTitle>
     </CardHeader>
     <CardContent>
       <p className="text-muted-foreground">Funcionalidade em desenvolvimento...</p>
