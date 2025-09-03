@@ -22,18 +22,16 @@ export const useUserRole = () => {
           .from('user_roles')
           .select('role')
           .eq('user_id', user.id)
-          .single();
+          .maybeSingle();
 
         if (error) {
-          // If no role exists, default to customer
-          if (error.code === 'PGRST116') {
-            setRole('customer');
-          } else {
-            console.error('Error fetching user role:', error);
-            setRole('customer'); // Default to customer on error
-          }
-        } else {
+          console.error('Error fetching user role:', error);
+          setRole('customer'); // Default to customer on error
+        } else if (data) {
           setRole(data.role as UserRole);
+        } else {
+          // No role exists, default to customer
+          setRole('customer');
         }
       } catch (error) {
         console.error('Error in fetchUserRole:', error);
