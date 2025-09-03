@@ -18,6 +18,7 @@ export interface AdminOrder {
   session_id?: string;
   stripe_session_id?: string;
   pix_qr_code?: string;
+  notes?: string;
   order_items: Array<{
     id: string;
     product_id: string;
@@ -160,6 +161,26 @@ export const useAdminOrders = () => {
     }
   };
 
+  const updateOrderNotes = async (orderId: string, notes: string) => {
+    try {
+      const { error } = await supabase
+        .from("orders")
+        .update({ 
+          notes,
+          updated_at: new Date().toISOString()
+        })
+        .eq("id", orderId);
+
+      if (error) throw error;
+
+      toast.success("Observações atualizadas");
+      fetchOrders();
+    } catch (error: any) {
+      console.error("Error updating order notes:", error);
+      toast.error("Erro ao atualizar observações");
+    }
+  };
+
   const getOrderById = async (orderId: string): Promise<AdminOrder | null> => {
     try {
       const { data, error } = await supabase
@@ -226,6 +247,7 @@ export const useAdminOrders = () => {
     fetchOrders,
     updateOrderStatus,
     updatePaymentStatus,
+    updateOrderNotes,
     getOrderById,
     calculateOrderProfit,
     calculateOrderProfitPercentage,

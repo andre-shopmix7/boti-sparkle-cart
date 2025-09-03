@@ -164,6 +164,7 @@ export type Database = {
           guest_name: string | null
           guest_phone: string | null
           id: string
+          notes: string | null
           order_status: string | null
           payment_method: string | null
           payment_status: string | null
@@ -181,6 +182,7 @@ export type Database = {
           guest_name?: string | null
           guest_phone?: string | null
           id?: string
+          notes?: string | null
           order_status?: string | null
           payment_method?: string | null
           payment_status?: string | null
@@ -198,6 +200,7 @@ export type Database = {
           guest_name?: string | null
           guest_phone?: string | null
           id?: string
+          notes?: string | null
           order_status?: string | null
           payment_method?: string | null
           payment_status?: string | null

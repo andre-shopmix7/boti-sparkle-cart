@@ -19,10 +19,10 @@ interface OrderDetailsModalProps {
 }
 
 export const OrderDetailsModal = ({ order, onClose }: OrderDetailsModalProps) => {
-  const { updateOrderStatus, updatePaymentStatus, calculateOrderProfit, calculateOrderProfitPercentage } = useAdminOrders();
+  const { updateOrderStatus, updatePaymentStatus, updateOrderNotes, calculateOrderProfit, calculateOrderProfitPercentage } = useAdminOrders();
   const [orderStatus, setOrderStatus] = useState(order.order_status);
   const [paymentStatus, setPaymentStatus] = useState(order.payment_status);
-  const [notes, setNotes] = useState("");
+  const [notes, setNotes] = useState(order.notes || "");
 
   const customerName = order.guest_name || 'Cliente Convidado';
   const customerEmail = order.guest_email || 'N/A';
@@ -37,6 +37,9 @@ export const OrderDetailsModal = ({ order, onClose }: OrderDetailsModalProps) =>
     }
     if (paymentStatus !== order.payment_status) {
       await updatePaymentStatus(order.id, paymentStatus);
+    }
+    if (notes !== (order.notes || "")) {
+      await updateOrderNotes(order.id, notes);
     }
   };
 
@@ -155,7 +158,7 @@ export const OrderDetailsModal = ({ order, onClose }: OrderDetailsModalProps) =>
               </div>
 
               <Button onClick={handleStatusUpdate} className="w-full">
-                Atualizar Status
+                Salvar Alterações
               </Button>
             </CardContent>
           </Card>
@@ -257,7 +260,7 @@ export const OrderDetailsModal = ({ order, onClose }: OrderDetailsModalProps) =>
             <CardContent>
               <div className="space-y-4">
                 <div>
-                  <Label htmlFor="notes">Adicionar observação</Label>
+                  <Label htmlFor="notes">Observações do pedido</Label>
                   <Textarea
                     id="notes"
                     placeholder="Adicione observações sobre este pedido..."
@@ -267,6 +270,15 @@ export const OrderDetailsModal = ({ order, onClose }: OrderDetailsModalProps) =>
                     rows={4}
                   />
                 </div>
+                
+                {order.notes && (
+                  <div>
+                    <Label className="text-sm font-medium">Observações existentes</Label>
+                    <p className="mt-1 text-sm bg-muted p-3 rounded border">
+                      {order.notes}
+                    </p>
+                  </div>
+                )}
                 
                 {order.pix_qr_code && (
                   <div>
