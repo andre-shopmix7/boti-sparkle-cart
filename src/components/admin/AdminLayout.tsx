@@ -21,12 +21,13 @@ import { OrdersManagement } from "./OrdersManagement";
 import { BannerManagement } from "./BannerManagement";
 import { UserRoleManager } from "./UserRoleManager";
 import { PixQRCodeGenerator } from "./PixQRCodeGenerator";
+import { ExcelProductImporter } from "./ExcelProductImporter";
 
 interface AdminLayoutProps {
   onBack: () => void;
 }
 
-type AdminView = 'dashboard' | 'products' | 'add-product' | 'edit-product' | 'orders' | 'users' | 'settings' | 'user-roles' | 'pix-qr';
+type AdminView = 'dashboard' | 'products' | 'add-product' | 'edit-product' | 'orders' | 'users' | 'settings' | 'user-roles' | 'pix-qr' | 'excel-import';
 
 export const AdminLayout = ({ onBack }: AdminLayoutProps) => {
   const { user } = useAuth();
@@ -37,6 +38,7 @@ export const AdminLayout = ({ onBack }: AdminLayoutProps) => {
     { id: 'dashboard', label: 'Dashboard', icon: BarChart3 },
     { id: 'products', label: 'Produtos', icon: Package },
     { id: 'add-product', label: 'Novo Produto', icon: Plus },
+    { id: 'excel-import', label: 'Importar Excel', icon: Sparkles },
     { id: 'pix-qr', label: 'QR Code PIX', icon: QrCode },
     { id: 'orders', label: 'Pedidos', icon: ShoppingBag },
     { id: 'user-roles', label: 'Permissões', icon: Users },
@@ -123,6 +125,7 @@ export const AdminLayout = ({ onBack }: AdminLayoutProps) => {
                   }}
                 />
               )}
+              {currentView === 'excel-import' && <ExcelProductImporter />}
               {currentView === 'pix-qr' && <PixQRCodeGenerator />}
               {currentView === 'orders' && <OrdersManagement />}
               {currentView === 'user-roles' && <UserRoleManager />}
