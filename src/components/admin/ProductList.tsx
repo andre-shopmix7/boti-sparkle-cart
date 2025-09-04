@@ -82,9 +82,7 @@ export const ProductList = ({ onEditProduct }: ProductListProps) => {
   const fetchProducts = async () => {
     try {
       const { data, error } = await supabase
-        .from('products')
-        .select('*')
-        .order('created_at', { ascending: false });
+        .rpc('get_admin_products');
 
       if (error) throw error;
       setProducts(data || []);
