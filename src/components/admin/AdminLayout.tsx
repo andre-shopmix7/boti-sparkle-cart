@@ -11,7 +11,8 @@ import {
   Users, 
   ShoppingBag,
   ArrowLeft,
-  Sparkles
+  Sparkles,
+  QrCode
 } from "lucide-react";
 import { ProductForm } from "./ProductForm";
 import { ProductList } from "./ProductList";
@@ -19,12 +20,13 @@ import { AdminDashboard } from "./AdminDashboard";
 import { OrdersManagement } from "./OrdersManagement";
 import { BannerManagement } from "./BannerManagement";
 import { UserRoleManager } from "./UserRoleManager";
+import { PixQRCodeGenerator } from "./PixQRCodeGenerator";
 
 interface AdminLayoutProps {
   onBack: () => void;
 }
 
-type AdminView = 'dashboard' | 'products' | 'add-product' | 'edit-product' | 'orders' | 'users' | 'settings' | 'user-roles';
+type AdminView = 'dashboard' | 'products' | 'add-product' | 'edit-product' | 'orders' | 'users' | 'settings' | 'user-roles' | 'pix-qr';
 
 export const AdminLayout = ({ onBack }: AdminLayoutProps) => {
   const { user } = useAuth();
@@ -35,6 +37,7 @@ export const AdminLayout = ({ onBack }: AdminLayoutProps) => {
     { id: 'dashboard', label: 'Dashboard', icon: BarChart3 },
     { id: 'products', label: 'Produtos', icon: Package },
     { id: 'add-product', label: 'Novo Produto', icon: Plus },
+    { id: 'pix-qr', label: 'QR Code PIX', icon: QrCode },
     { id: 'orders', label: 'Pedidos', icon: ShoppingBag },
     { id: 'user-roles', label: 'Permissões', icon: Users },
     { id: 'settings', label: 'Banners', icon: Settings },
@@ -120,6 +123,7 @@ export const AdminLayout = ({ onBack }: AdminLayoutProps) => {
                   }}
                 />
               )}
+              {currentView === 'pix-qr' && <PixQRCodeGenerator />}
               {currentView === 'orders' && <OrdersManagement />}
               {currentView === 'user-roles' && <UserRoleManager />}
               {currentView === 'settings' && <BannerManagement />}
