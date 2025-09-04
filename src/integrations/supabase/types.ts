@@ -463,6 +463,38 @@ export type Database = {
           total_stock_items: number
         }[]
       }
+      get_admin_products: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          admin_notes: string
+          brand: string
+          category_id: string
+          cost_price: number
+          created_at: string
+          description: string
+          discount_percentage: number
+          expiry_date: string
+          id: string
+          installment_price: number
+          installments: number
+          inventory_value: number
+          invoice_number: string
+          is_active: boolean
+          is_featured: boolean
+          name: string
+          original_price: number
+          price: number
+          profit_amount: number
+          profit_percentage: number
+          purchase_date: string
+          rating: number
+          review_count: number
+          special_offer: string
+          stock_quantity: number
+          tags: string[]
+          updated_at: string
+        }[]
+      }
       get_current_user_role: {
         Args: Record<PropertyKey, never>
         Returns: string

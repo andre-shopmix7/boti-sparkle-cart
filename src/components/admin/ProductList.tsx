@@ -82,10 +82,10 @@ export const ProductList = ({ onEditProduct }: ProductListProps) => {
   const fetchProducts = async () => {
     try {
       const { data, error } = await supabase
-        .rpc('get_admin_products');
+        .rpc('get_admin_products' as any);
 
       if (error) throw error;
-      setProducts(data || []);
+      setProducts((data as Product[]) || []);
     } catch (error) {
       console.error('Error fetching products:', error);
       toast({
