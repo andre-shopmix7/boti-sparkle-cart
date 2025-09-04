@@ -107,13 +107,6 @@ export type Database = {
             foreignKeyName: "favorites_product_id_fkey"
             columns: ["product_id"]
             isOneToOne: false
-            referencedRelation: "customer_products"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "favorites_product_id_fkey"
-            columns: ["product_id"]
-            isOneToOne: false
             referencedRelation: "products"
             referencedColumns: ["id"]
           },
@@ -153,13 +146,6 @@ export type Database = {
             columns: ["order_id"]
             isOneToOne: false
             referencedRelation: "orders"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "order_items_product_id_fkey"
-            columns: ["product_id"]
-            isOneToOne: false
-            referencedRelation: "customer_products"
             referencedColumns: ["id"]
           },
           {
@@ -254,13 +240,6 @@ export type Database = {
           product_id?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "product_images_product_id_fkey"
-            columns: ["product_id"]
-            isOneToOne: false
-            referencedRelation: "customer_products"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "product_images_product_id_fkey"
             columns: ["product_id"]
@@ -440,13 +419,6 @@ export type Database = {
             foreignKeyName: "shopping_cart_product_id_fkey"
             columns: ["product_id"]
             isOneToOne: false
-            referencedRelation: "customer_products"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "shopping_cart_product_id_fkey"
-            columns: ["product_id"]
-            isOneToOne: false
             referencedRelation: "products"
             referencedColumns: ["id"]
           },
@@ -478,80 +450,7 @@ export type Database = {
       }
     }
     Views: {
-      customer_products: {
-        Row: {
-          brand: string | null
-          category_id: string | null
-          created_at: string | null
-          description: string | null
-          discount_percentage: number | null
-          id: string | null
-          installment_price: number | null
-          installments: number | null
-          is_active: boolean | null
-          is_featured: boolean | null
-          name: string | null
-          original_price: number | null
-          price: number | null
-          rating: number | null
-          review_count: number | null
-          special_offer: string | null
-          stock_quantity: number | null
-          tags: string[] | null
-          updated_at: string | null
-        }
-        Insert: {
-          brand?: string | null
-          category_id?: string | null
-          created_at?: string | null
-          description?: string | null
-          discount_percentage?: number | null
-          id?: string | null
-          installment_price?: number | null
-          installments?: number | null
-          is_active?: boolean | null
-          is_featured?: boolean | null
-          name?: string | null
-          original_price?: number | null
-          price?: number | null
-          rating?: number | null
-          review_count?: number | null
-          special_offer?: string | null
-          stock_quantity?: number | null
-          tags?: string[] | null
-          updated_at?: string | null
-        }
-        Update: {
-          brand?: string | null
-          category_id?: string | null
-          created_at?: string | null
-          description?: string | null
-          discount_percentage?: number | null
-          id?: string | null
-          installment_price?: number | null
-          installments?: number | null
-          is_active?: boolean | null
-          is_featured?: boolean | null
-          name?: string | null
-          original_price?: number | null
-          price?: number | null
-          rating?: number | null
-          review_count?: number | null
-          special_offer?: string | null
-          stock_quantity?: number | null
-          tags?: string[] | null
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "products_category_id_fkey"
-            columns: ["category_id"]
-            isOneToOne: false
-            referencedRelation: "categories"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
+      [_ in never]: never
     }
     Functions: {
       get_current_user_role: {
@@ -559,6 +458,30 @@ export type Database = {
         Returns: string
       }
       get_customer_products: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          brand: string
+          category_id: string
+          created_at: string
+          description: string
+          discount_percentage: number
+          id: string
+          installment_price: number
+          installments: number
+          is_active: boolean
+          is_featured: boolean
+          name: string
+          original_price: number
+          price: number
+          rating: number
+          review_count: number
+          special_offer: string
+          stock_quantity: number
+          tags: string[]
+          updated_at: string
+        }[]
+      }
+      get_public_products_secure: {
         Args: Record<PropertyKey, never>
         Returns: {
           brand: string
