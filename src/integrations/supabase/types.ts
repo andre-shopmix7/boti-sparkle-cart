@@ -453,6 +453,16 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_admin_dashboard_data: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          expiring_products: Json
+          product_count: number
+          total_inventory_value: number
+          total_potential_profit: number
+          total_stock_items: number
+        }[]
+      }
       get_current_user_role: {
         Args: Record<PropertyKey, never>
         Returns: string

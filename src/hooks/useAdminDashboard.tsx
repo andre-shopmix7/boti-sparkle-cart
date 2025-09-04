@@ -55,33 +55,26 @@ export const useAdminDashboard = () => {
     try {
       setLoading(true);
 
-      // Fetch basic counts
-      const [productsRes, ordersRes, usersRes] = await Promise.all([
-        supabase.from('products').select('id', { count: 'exact' }),
+      // Fetch basic counts and admin dashboard data
+      const [ordersRes, usersRes, dashboardData] = await Promise.all([
         supabase.from('orders').select('id', { count: 'exact' }),
         supabase.from('profiles').select('id', { count: 'exact' }),
+        supabase.rpc('get_admin_dashboard_data'),
       ]);
 
-      // Fetch products with financial data
-      const { data: products } = await supabase
-        .from('products')
-        .select('id, name, brand, stock_quantity, cost_price, price, profit_amount, inventory_value, expiry_date')
-        .eq('is_active', true);
-
-      // Calculate inventory values
-      const inventoryValue = products?.reduce((sum, p) => sum + (p.inventory_value || 0), 0) || 0;
-      const potentialProfit = products?.reduce((sum, p) => sum + ((p.profit_amount || 0) * p.stock_quantity), 0) || 0;
-      const totalStock = products?.reduce((sum, p) => sum + p.stock_quantity, 0) || 0;
-
-      // Find products expiring in next 6 months
-      const sixMonthsFromNow = new Date();
-      sixMonthsFromNow.setMonth(sixMonthsFromNow.getMonth() + 6);
-      
-      const expiringProducts = products?.filter(p => {
-        if (!p.expiry_date) return false;
-        const expiryDate = new Date(p.expiry_date);
-        return expiryDate <= sixMonthsFromNow && expiryDate >= new Date();
-      }) || [];
+      const adminData = dashboardData.data?.[0];
+      const inventoryValue = Number(adminData?.total_inventory_value || 0);
+      const potentialProfit = Number(adminData?.total_potential_profit || 0);
+      const totalStock = Number(adminData?.total_stock_items || 0);
+      const expiringProducts = Array.isArray(adminData?.expiring_products) 
+        ? adminData.expiring_products.map((p: any) => ({
+            id: p.id,
+            name: p.name,
+            brand: p.brand,
+            expiry_date: p.expiry_date,
+            stock_quantity: p.stock_quantity
+          }))
+        : [];
 
       // Fetch monthly sales data
       const { data: monthlyOrders } = await supabase
@@ -111,13 +104,13 @@ export const useAdminDashboard = () => {
       });
 
       setStats({
-        totalProducts: productsRes.count || 0,
+        totalProducts: Number(adminData?.product_count || 0),
         totalOrders: ordersRes.count || 0,
         totalUsers: usersRes.count || 0,
         totalInventoryValue: inventoryValue,
         totalPotentialProfit: potentialProfit,
         totalStockItems: totalStock,
-        expiringProducts: expiringProducts as Product[],
+        expiringProducts: expiringProducts,
         monthlyRevenue: monthlyData,
         salesByMonth: monthlyData,
       });
