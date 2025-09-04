@@ -45,7 +45,7 @@ export const useProducts = () => {
       
       // Use the public function for fetching products
       const { data: productsData, error: productsError } = await supabase
-        .rpc("get_public_products");
+        .rpc("get_public_products_secure");
 
       if (productsError) {
         toast.error("Erro ao buscar produtos");
