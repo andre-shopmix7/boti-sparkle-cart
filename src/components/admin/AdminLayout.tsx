@@ -12,7 +12,8 @@ import {
   ShoppingBag,
   ArrowLeft,
   Sparkles,
-  QrCode
+  QrCode,
+  Globe
 } from "lucide-react";
 import { ProductForm } from "./ProductForm";
 import { ProductList } from "./ProductList";
@@ -22,12 +23,13 @@ import { BannerManagement } from "./BannerManagement";
 import { UserRoleManager } from "./UserRoleManager";
 import { PixQRCodeGenerator } from "./PixQRCodeGenerator";
 import { ExcelProductImporter } from "./ExcelProductImporter";
+import { BoticarioScraper } from "./BoticarioScraper";
 
 interface AdminLayoutProps {
   onBack: () => void;
 }
 
-type AdminView = 'dashboard' | 'products' | 'add-product' | 'edit-product' | 'orders' | 'users' | 'settings' | 'user-roles' | 'pix-qr' | 'excel-import';
+type AdminView = 'dashboard' | 'products' | 'add-product' | 'edit-product' | 'orders' | 'users' | 'settings' | 'user-roles' | 'pix-qr' | 'excel-import' | 'boticario-scraper';
 
 export const AdminLayout = ({ onBack }: AdminLayoutProps) => {
   const { user } = useAuth();
@@ -39,6 +41,7 @@ export const AdminLayout = ({ onBack }: AdminLayoutProps) => {
     { id: 'products', label: 'Produtos', icon: Package },
     { id: 'add-product', label: 'Novo Produto', icon: Plus },
     { id: 'excel-import', label: 'Importar Excel', icon: Sparkles },
+    { id: 'boticario-scraper', label: 'Importar Boticário', icon: Globe },
     { id: 'pix-qr', label: 'QR Code PIX', icon: QrCode },
     { id: 'orders', label: 'Pedidos', icon: ShoppingBag },
     { id: 'user-roles', label: 'Permissões', icon: Users },
@@ -126,6 +129,7 @@ export const AdminLayout = ({ onBack }: AdminLayoutProps) => {
                 />
               )}
               {currentView === 'excel-import' && <ExcelProductImporter />}
+              {currentView === 'boticario-scraper' && <BoticarioScraper />}
               {currentView === 'pix-qr' && <PixQRCodeGenerator />}
               {currentView === 'orders' && <OrdersManagement />}
               {currentView === 'user-roles' && <UserRoleManager />}
