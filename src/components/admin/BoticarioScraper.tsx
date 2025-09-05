@@ -201,75 +201,54 @@ export const BoticarioScraper = () => {
     return { success, errors };
   };
 
-  const startScraping = async () => {
+  const startScrapingWithEdgeFunction = async () => {
     setScraping(true);
     setProgress(0);
     setResults(null);
     
     try {
-      const allProducts: BoticarioProduct[] = [];
-      
       toast({
         title: "Iniciando scraping",
-        description: "Buscando produtos do site do Boticário...",
+        description: "Processando produtos do Boticário em background...",
       });
 
-      // Scrape each category
-      for (let i = 0; i < categories.length; i++) {
-        const category = categories[i];
-        setProgress((i / categories.length) * 50); // First 50% for scraping
-        
-        toast({
-          title: `Processando categoria`,
-          description: category.name,
-        });
+      const { data, error } = await supabase.functions.invoke('scrape-boticario', {
+        body: { action: 'start' }
+      });
 
-        const products = await scrapePage(category.url);
-        allProducts.push(...products);
-        
-        // Delay between categories to be respectful
-        await new Promise(resolve => setTimeout(resolve, 2000));
-      }
-
-      if (allProducts.length === 0) {
-        toast({
-          title: "Nenhum produto encontrado",
-          description: "Não foi possível extrair produtos do site. Verifique a estrutura da página.",
-          variant: "destructive"
-        });
-        return;
-      }
+      if (error) throw error;
 
       toast({
-        title: "Produtos encontrados",
-        description: `${allProducts.length} produtos extraídos. Salvando no banco...`,
+        title: "Scraping iniciado",
+        description: "Os produtos estão sendo cadastrados em background. Verifique a lista de produtos em alguns minutos.",
       });
 
-      // Insert products into database
-      const insertResult = await insertProducts(allProducts);
-      
-      setResults({
-        total: allProducts.length,
-        success: insertResult.success,
-        errors: insertResult.errors,
-        products: allProducts
-      });
-      
-      toast({
-        title: "Scraping concluído",
-        description: `${insertResult.success} produtos salvos de ${allProducts.length} encontrados`,
-      });
+      // Simulate progress for UI feedback
+      let currentProgress = 0;
+      const progressInterval = setInterval(() => {
+        currentProgress += 10;
+        setProgress(currentProgress);
+        
+        if (currentProgress >= 100) {
+          clearInterval(progressInterval);
+          setResults({
+            total: 0,
+            success: 0,
+            errors: [],
+            products: []
+          });
+        }
+      }, 1000);
 
     } catch (error) {
-      console.error('Scraping error:', error);
+      console.error('Error starting scraping:', error);
       toast({
-        title: "Erro no scraping",
-        description: "Erro ao processar produtos do Boticário",
+        title: "Erro ao iniciar scraping",
+        description: "Não foi possível iniciar o processo de importação",
         variant: "destructive"
       });
     } finally {
       setScraping(false);
-      setProgress(100);
     }
   };
 
@@ -311,7 +290,7 @@ export const BoticarioScraper = () => {
             </div>
 
             <Button
-              onClick={startScraping}
+              onClick={startScrapingWithEdgeFunction}
               disabled={scraping}
               className="w-full bg-gradient-luxury text-white shadow-glow"
               size="lg"
